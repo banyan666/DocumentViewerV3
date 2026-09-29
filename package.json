@@ -1,0 +1,87 @@
+{
+  "name": "document-viewer-vue3",
+  "version": "0.1.0",
+  "description": "Browser-native Vue 3 viewer for Word, Excel, PDF, and PowerPoint documents.",
+  "homepage": "https://banyan666.github.io/DocumentViewerV3/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/banyan666/DocumentViewerV3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/banyan666/DocumentViewerV3/issues"
+  },
+  "keywords": [
+    "vue3",
+    "document-viewer",
+    "word-viewer",
+    "excel-viewer",
+    "pdf-viewer",
+    "ppt-viewer"
+  ],
+  "packageManager": "pnpm@12.6.0",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./document-viewer-vue3/document-viewer-vue3.umd.cjs",
+  "module": "./document-viewer-vue3/document-viewer-vue3.js",
+  "types": "./document-viewer-vue3/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./document-viewer-vue3/types/index.d.ts",
+      "import": "./document-viewer-vue3/document-viewer-vue3.js",
+      "require": "./document-viewer-vue3/document-viewer-vue3.umd.cjs",
+      "default": "./document-viewer-vue3/document-viewer-vue3.js"
+    },
+    "./style.css": "./document-viewer-vue3/style.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "document-viewer-vue3",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "dev": "pnpm dev:examples",
+    "dev:examples": "vite --host 127.0.0.1",
+    "type-check": "vue-tsc --noEmit -p tsconfig.json",
+    "build": "pnpm type-check && vite build --config vite.lib.config.ts",
+    "build:examples": "pnpm type-check && vite build",
+    "build:pages": "pnpm build:examples && pnpm docs:build && node scripts/prepare-pages.mjs",
+    "docs:dev": "vitepress dev docs --host 127.0.0.1",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs --host 127.0.0.1",
+    "preview": "vite preview --host 127.0.0.1",
+    "pack:check": "pnpm build && npm pack --dry-run",
+    "verify": "pnpm build && pnpm build:examples && pnpm docs:build && node scripts/verify-package.mjs",
+    "prepublishOnly": "pnpm verify"
+  },
+  "peerDependencies": {
+    "vue": ">=3.3 <4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vue/tsconfig": "^0.9.1",
+    "docx-preview": "0.4.1",
+    "dompurify": "3.4.15",
+    "jszip": "3.10.2",
+    "pdfjs-dist": "5.4.624",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.0",
+    "vite-plugin-dts": "^5.1.0",
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.42",
+    "vue-tsc": "^3.3.4",
+    "xlsx": "0.18.5"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "license": "MIT"
+}
