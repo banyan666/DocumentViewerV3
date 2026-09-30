@@ -17,6 +17,7 @@ export default defineConfig({
         'src/index.ts',
         'src/formats.ts',
         'src/types.ts',
+        'src/utif.d.ts',
         'src/components/DocumentViewer.vue',
       ],
     }),

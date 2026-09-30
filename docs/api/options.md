@@ -32,7 +32,7 @@
 
 ## 页面间距
 
-Word、旧版 DOC、PDF 和 PowerPoint 使用统一的外层边距与页间距，渲染器周围背景保持透明。可通过 CSS 变量调整：
+Word、旧版 DOC、PDF、PowerPoint 和图片使用统一的外层边距与页间距，渲染器周围背景保持透明。可通过 CSS 变量调整：
 
 ```css
 .document-viewer {
@@ -47,7 +47,7 @@ Word、旧版 DOC、PDF 和 PowerPoint 使用统一的外层边距与页间距�
 interface DocumentLoadContext {
   filename: string
   extension: string
-  kind: 'word' | 'spreadsheet' | 'pdf' | 'presentation'
+  kind: 'word' | 'spreadsheet' | 'pdf' | 'presentation' | 'image'
   byteLength?: number
   pageCount?: number
 }

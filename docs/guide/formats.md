@@ -8,6 +8,7 @@
 | Excel | `.xls` `.xlsx` `.xlsm` `.xlsb` `.xlt` `.xltx` `.xltm` | 多工作表、单元格内容与基础格式 |
 | PDF | `.pdf` | 多页 Canvas 渲染 |
 | PowerPoint | `.pptx` `.pptm` `.potx` `.potm` `.ppsx` `.ppsm` | 幻灯片文本、图片与基础形状 |
+| 图片 | `.png` `.jpg` `.jpeg` `.gif` `.webp` `.bmp` `.svg` `.avif` `.ico` `.jxl` `.heic` `.heif` `.tif` `.tiff` | 自适应、缩放、旋转、灯箱与多页 TIFF |
 
 ## Word
 
@@ -38,6 +39,12 @@ PDF 页面以 Canvas 渲染，支持多页浏览和组件级缩放。加密文�
 ::: info 关于 `.ppt`
 旧版二进制 `.ppt` 不在当前支持清单中。请先转换为 `.pptx`，或在业务系统的文件入库流程中统一保存为 OpenXML 格式。
 :::
+
+## 图片
+
+PNG、JPEG、GIF、WebP、BMP、SVG、AVIF、ICO 与 JPEG XL 优先使用浏览器原生图片解码能力，因此最终兼容性取决于用户浏览器。HEIC/HEIF 会在打开时按需转换为 PNG；TIFF 会按页解码并显示，可通过工具栏旋转，点击图片可打开灯箱。
+
+为避免异常 TIFF 占用过多内存，组件限制单个 TIFF 最大 32 MiB、最多 64 页、单边最大 16384 像素、单页最大 3200 万像素、所有页面累计最大 1.28 亿像素。超过限制时会进入统一的加载失败状态。
 
 ## 格式判断工具
 

@@ -10,11 +10,17 @@ The distributed JavaScript contains code from the following projects:
 | PDF.js / pdfjs-dist | Apache License 2.0 | https://github.com/mozilla/pdf.js |
 | SheetJS Community Edition / xlsx | Apache License 2.0 | https://sheetjs.com/ |
 | JSZip | MIT License | https://stuk.github.io/jszip/ |
+| heic2any | MIT License | https://github.com/alexcorvi/heic2any |
+| UTIF.js | MIT License | https://github.com/photopea/UTIF.js |
 
 Apache License 2.0 text: https://www.apache.org/licenses/LICENSE-2.0
 
 MIT-licensed portions retain their copyright notices in the respective upstream
 distributions. This notice does not alter the license of the original projects.
+
+`heic2any` is loaded only for HEIC/HEIF conversion. `UTIF.js` is loaded only
+for TIFF files; the viewer bounds encoded bytes, page count, page dimensions,
+per-page pixels, and cumulative decoded pixels before conversion.
 
 The legacy DOC parser source is derived from the public msdoc-viewer 0.2.0 line:
 

@@ -62,6 +62,10 @@ const viewer = ref<DocumentViewerInstance>()
 | `resetZoom()` | `DocumentZoomState` | 回到初始缩放比例 |
 | `setZoom(scale)` | `DocumentZoomState` | 设置缩放比例 |
 | `getZoomState()` | `DocumentZoomState` | 读取当前缩放状态 |
+| `rotateLeft()` | `number` | 图片向左旋转 90°，返回当前角度 |
+| `rotateRight()` | `number` | 图片向右旋转 90°，返回当前角度 |
+| `setRotation(rotation)` | `number` | 设置图片旋转角度（自动归一为 90° 的倍数） |
+| `getRotation()` | `number` | 读取当前图片旋转角度 |
 | `downloadOriginalFile()` | `void` | 下载当前文档原始数据 |
 | `print()` | `void` | 调用浏览器打印 |
 | `getScrollContainer()` | `HTMLDivElement \| null` | 获取预览滚动容器 |

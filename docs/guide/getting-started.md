@@ -43,7 +43,7 @@ function chooseFile(event: Event) {
 <template>
   <input
     type="file"
-    accept=".doc,.docx,.xls,.xlsx,.pdf,.pptx"
+    accept=".doc,.docx,.xls,.xlsx,.pdf,.pptx,.png,.jpg,.webp,.tiff,.heic"
     @change="chooseFile"
   >
   <DocumentViewer

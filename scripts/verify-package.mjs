@@ -50,7 +50,7 @@ const library = await import(pathToFileURL(resolve(
   root,
   'document-viewer-vue3/document-viewer-vue3.js',
 )).href)
-for (const extension of ['doc', 'dot', 'docx', 'pdf', 'pptx', 'xls', 'xlsx']) {
+for (const extension of ['doc', 'dot', 'docx', 'pdf', 'pptx', 'xls', 'xlsx', 'png', 'jpg', 'webp', 'tiff', 'heic']) {
   if (!library.DOCUMENT_VIEWER_EXTENSIONS?.includes(extension)) {
     throw new Error(`Missing required document extension: ${extension}`)
   }

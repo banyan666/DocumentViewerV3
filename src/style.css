@@ -107,6 +107,7 @@
 .document-viewer__actions button:hover:not(:disabled) { background: color-mix(in srgb, var(--dv-accent) 10%, transparent); border-color: color-mix(in srgb, var(--dv-accent) 20%, transparent); }
 .document-viewer__actions button:disabled { opacity: .35; cursor: not-allowed; }
 .document-viewer__actions .document-viewer__zoom { min-width: 56px; color: var(--dv-muted); font-size: 12px; }
+.document-viewer__actions .document-viewer__rotation { min-width: 48px; color: var(--dv-muted); font-size: 12px; }
 .document-viewer__separator { width: 1px; height: 20px; margin: 0 4px; background: var(--dv-border); }
 
 .document-viewer__viewport {
@@ -213,6 +214,20 @@
 .document-slide__shape { display: flex; align-items: center; overflow: hidden; padding: .3%; white-space: pre-wrap; line-height: 1.18; }
 .document-slide__picture { object-fit: contain; }
 
+.document-renderer--image { position: relative; min-width: 100%; min-height: 100%; background: transparent; }
+.document-image-stage { display: flex; align-items: center; justify-content: center; min-width: 100%; min-height: 100%; padding: var(--document-viewer-page-padding); background: transparent; }
+.document-image-stage.is-multipage { flex-direction: column; justify-content: flex-start; gap: var(--document-viewer-page-gap); }
+.document-image-frame { position: relative; flex: 0 0 auto; background: transparent; box-shadow: 0 8px 28px rgb(15 23 42 / 15%); }
+.document-image-frame img { position: absolute; top: 50%; left: 50%; display: block; max-width: none; margin: 0; border: 0; cursor: zoom-in; transform: translate(-50%, -50%) rotate(var(--document-image-rotation, 0deg)); transform-origin: center; transition: transform 180ms ease; }
+.document-image-frame img:focus-visible { outline: 3px solid var(--dv-accent); outline-offset: 4px; }
+.document-image-lightbox { position: absolute; z-index: 40; inset: 0; display: flex; align-items: center; justify-content: center; padding: 40px; background: rgb(9 17 30 / 92%); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 180ms ease, visibility 0s linear 180ms; }
+.document-image-lightbox[data-open='true'] { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
+.document-image-lightbox img { display: block; max-width: none; max-height: none; object-fit: contain; box-shadow: 0 28px 80px rgb(0 0 0 / 40%); transform: rotate(var(--document-image-rotation, 0deg)) scale(.985); transform-origin: center; transition: transform 180ms ease; }
+.document-image-lightbox[data-open='true'] img { transform: rotate(var(--document-image-rotation, 0deg)) scale(1); }
+.document-image-lightbox button { position: absolute; top: 16px; right: 16px; display: grid; width: 40px; height: 40px; place-items: center; padding: 0; color: #172033; background: rgb(255 255 255 / 96%); border: 1px solid rgb(255 255 255 / 70%); border-radius: 50%; box-shadow: 0 12px 28px rgb(0 0 0 / 24%); font: 400 27px/1 Arial, sans-serif; cursor: pointer; }
+.document-image-lightbox button:hover { background: #fff; transform: scale(1.04); }
+.document-image-lightbox button:focus-visible { outline: 3px solid #60a5fa; outline-offset: 2px; }
+
 @keyframes document-viewer-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 640px) {
@@ -221,7 +236,16 @@
   .document-viewer__identity strong { max-width: 30vw; }
   .document-viewer__toolbar { gap: 6px; padding-inline: 6px; }
   .document-viewer__actions .document-viewer__zoom { min-width: 48px; }
+  .document-viewer__actions .document-viewer__rotation { display: none; }
   .document-slide { width: calc(100vw - 52px); }
+  .document-image-lightbox { padding: 18px; }
+  .document-image-lightbox button { top: 10px; right: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .document-image-frame img,
+  .document-image-lightbox,
+  .document-image-lightbox img { transition: none; }
 }
 
 @media print {
@@ -230,5 +254,6 @@
   .document-viewer { position: absolute; inset: 0; height: auto !important; overflow: visible; border: 0; }
   .document-viewer__toolbar { display: none; }
   .document-viewer__viewport { overflow: visible; background: #fff; }
-  .document-pdf-page, .document-slide, .document-renderer--word section.docx, .document-renderer--word section.document-viewer-docx, .document-renderer--doc .msdoc-page { break-after: page; box-shadow: none; }
+  .document-image-lightbox { display: none; }
+  .document-pdf-page, .document-slide, .document-image-frame, .document-renderer--word section.docx, .document-renderer--word section.document-viewer-docx, .document-renderer--doc .msdoc-page { break-after: page; box-shadow: none; }
 }

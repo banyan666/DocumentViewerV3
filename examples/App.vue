@@ -12,7 +12,7 @@ import type { DocumentProgress, DocumentViewerTheme } from '../src'
 const selectedFile = ref<File>()
 const urlDraft = ref('')
 const activeUrl = ref('')
-const status = ref('等待选择文档')
+const status = ref('等待选择文件')
 const statusTone = ref<'idle' | 'loading' | 'ready' | 'error'>('idle')
 const isDragging = ref(false)
 const theme = ref<DocumentViewerTheme>('light')
@@ -28,11 +28,12 @@ const formats = [
   { key: 'X', label: 'Excel', extensions: 'XLS / XLSX', detail: '多工作表与单元格内容', tone: 'sheet' },
   { key: 'P', label: 'PDF', extensions: 'PDF', detail: '逐页 Canvas 清晰渲染', tone: 'pdf' },
   { key: 'S', label: 'PowerPoint', extensions: 'PPTX', detail: '文本、图片与基础形状', tone: 'slide' },
+  { key: 'I', label: 'Image', extensions: 'PNG / JPG / TIFF', detail: '旋转、灯箱与多页 TIFF', tone: 'image' },
 ] as const
 
 const currentName = computed(() => {
   if (selectedFile.value) return selectedFile.value.name
-  if (!activeUrl.value) return '未选择文档'
+  if (!activeUrl.value) return '未选择文件'
   try {
     return decodeURIComponent(new URL(activeUrl.value).pathname.split('/').pop() || activeUrl.value)
   } catch {
@@ -58,7 +59,7 @@ function openFile(file?: File) {
   selectedFile.value = file
   activeUrl.value = ''
   urlDraft.value = ''
-  status.value = '正在读取本地文档'
+  status.value = '正在读取本地文件'
   statusTone.value = 'loading'
   progress.value = 0
 }
@@ -84,7 +85,7 @@ function openUrl() {
   }
   selectedFile.value = undefined
   activeUrl.value = nextUrl
-  status.value = '正在获取远程文档'
+  status.value = '正在获取远程文件'
   statusTone.value = 'loading'
   progress.value = 0
 }
@@ -98,7 +99,7 @@ function resetSource() {
   selectedFile.value = undefined
   activeUrl.value = ''
   urlDraft.value = ''
-  status.value = '等待选择文档'
+  status.value = '等待选择文件'
   statusTone.value = 'idle'
   progress.value = 0
 }
@@ -122,18 +123,18 @@ function resetSource() {
     <main id="top">
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow"><span /> 浏览器端文档预览组件</p>
+          <p class="eyebrow"><span /> 浏览器端文档与图片预览组件</p>
           <h1>让文档预览<br><em>留在你的界面里。</em></h1>
           <p class="hero-lead">
-            为 Vue 3 应用提供统一的 Word、Excel、PDF 与 PowerPoint 预览体验。
-            文件在浏览器中读取，组件负责加载、渲染、缩放、打印与下载。
+            为 Vue 3 应用提供统一的 Word、Excel、PDF、PowerPoint 与图片预览体验。
+            文件在浏览器中读取，组件负责加载、渲染、缩放、旋转、打印与下载。
           </p>
           <div class="hero-actions">
             <a class="primary-action" href="#playground">立即体验 <span>↓</span></a>
             <code>pnpm add document-viewer-vue3</code>
           </div>
           <dl class="hero-facts">
-            <div><dt>4</dt><dd>文档家族</dd></div>
+            <div><dt>5</dt><dd>文件家族</dd></div>
             <div><dt>0</dt><dd>服务端转换</dd></div>
             <div><dt>1</dt><dd>Vue 组件入口</dd></div>
           </dl>
@@ -171,7 +172,7 @@ function resetSource() {
 
       <section id="playground" class="playground-section">
         <header class="section-heading">
-          <div><p class="section-kicker">Interactive workspace</p><h2>把你的文档放进来。</h2></div>
+          <div><p class="section-kicker">Interactive workspace</p><h2>把你的文件放进来。</h2></div>
           <p>选择本地文件，或输入允许跨域访问的 URL。示例不会上传本地文件。</p>
         </header>
 
@@ -192,16 +193,16 @@ function resetSource() {
             >
               <input id="document-input" type="file" :accept="DOCUMENT_VIEWER_ACCEPT" @change="chooseFile">
               <span class="upload-symbol" aria-hidden="true"><i>↑</i></span>
-              <strong>选择本地文档</strong>
+              <strong>选择本地文件</strong>
               <small>点击选择，或拖放到这里</small>
               <em>{{ DOCUMENT_VIEWER_ACCEPT.replaceAll(',', '  ') }}</em>
             </label>
             <div class="source-divider"><span>或使用 URL</span></div>
             <form class="url-control" @submit.prevent="openUrl">
-              <label for="document-url">文档地址</label>
+              <label for="document-url">文件地址</label>
               <div>
                 <input id="document-url" v-model="urlDraft" type="url" placeholder="https://example.com/report.pdf" autocomplete="url">
-                <button type="submit" aria-label="打开远程文档">→</button>
+                <button type="submit" aria-label="打开远程文件">→</button>
               </div>
               <small>远程服务器需要允许浏览器跨域读取。</small>
             </form>
@@ -231,7 +232,7 @@ function resetSource() {
             </header>
             <div class="viewer-shell" :data-theme="theme">
               <div class="format-tabs" aria-hidden="true">
-                <i data-tone="word">W</i><i data-tone="sheet">X</i><i data-tone="pdf">P</i><i data-tone="slide">S</i>
+                <i data-tone="word">W</i><i data-tone="sheet">X</i><i data-tone="pdf">P</i><i data-tone="slide">S</i><i data-tone="image">I</i>
               </div>
               <DocumentViewer
                 :file="selectedFile"
@@ -280,7 +281,7 @@ function resetSource() {
 
     <footer class="site-footer">
       <div><span class="brand-mini">DV</span><strong>document-viewer-vue3</strong></div>
-      <p>Word · Excel · PDF · PowerPoint / Vue 3</p>
+      <p>Word · Excel · PDF · PowerPoint · Image / Vue 3</p>
       <a href="#top">回到顶部 ↑</a>
     </footer>
   </div>

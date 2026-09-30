@@ -20,9 +20,23 @@ export const DOCUMENT_VIEWER_EXTENSIONS = [
   'potm',
   'ppsx',
   'ppsm',
+  'avif',
+  'bmp',
+  'gif',
+  'heic',
+  'heif',
+  'ico',
+  'jxl',
+  'jpg',
+  'jpeg',
+  'png',
+  'svg',
+  'tif',
+  'tiff',
+  'webp',
 ] as const
 
-export type DocumentKind = 'word' | 'spreadsheet' | 'pdf' | 'presentation'
+export type DocumentKind = 'word' | 'spreadsheet' | 'pdf' | 'presentation' | 'image'
 
 export type DocumentViewerExtension = typeof DOCUMENT_VIEWER_EXTENSIONS[number]
 
@@ -48,5 +62,6 @@ export function getDocumentKind(extension: string): DocumentKind | null {
   if (['xls', 'xlsx', 'xlsm', 'xlsb', 'xlt', 'xltx', 'xltm'].includes(extension)) return 'spreadsheet'
   if (extension === 'pdf') return 'pdf'
   if (['pptx', 'pptm', 'potx', 'potm', 'ppsx', 'ppsm'].includes(extension)) return 'presentation'
+  if (['avif', 'bmp', 'gif', 'heic', 'heif', 'ico', 'jxl', 'jpg', 'jpeg', 'png', 'svg', 'tif', 'tiff', 'webp'].includes(extension)) return 'image'
   return null
 }

@@ -54,6 +54,10 @@ export interface DocumentZoomState {
 
 export interface DocumentRendererController {
   pageCount?: number
+  getRotation?(): number
+  setRotation?(rotation: number): number
+  rotateLeft?(): number
+  rotateRight?(): number
   destroy(): void | Promise<void>
 }
 
@@ -89,6 +93,10 @@ export interface DocumentViewerInstance {
   resetZoom(): DocumentZoomState
   setZoom(scale: number): DocumentZoomState
   getZoomState(): DocumentZoomState
+  rotateLeft(): number
+  rotateRight(): number
+  setRotation(rotation: number): number
+  getRotation(): number
   downloadOriginalFile(): void
   print(): void
   getScrollContainer(): HTMLDivElement | null

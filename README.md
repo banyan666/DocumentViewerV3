@@ -1,14 +1,14 @@
 # document-viewer-vue3
 
-面向 Vue 3 的浏览器端文档预览组件。使用一个组件统一展示 Word、Excel、PDF 与 PowerPoint，支持本地 `File` 和远程 URL，并提供加载进度、缩放、下载、打印和主题控制。
+面向 Vue 3 的浏览器端文件预览组件。使用一个组件统一展示 Word、Excel、PDF、PowerPoint 与常见图片，支持本地 `File` 和远程 URL，并提供加载进度、缩放、旋转、下载、打印和主题控制。
 
 [在线示例](https://banyan666.github.io/DocumentViewerV3/) · [使用文档](https://banyan666.github.io/DocumentViewerV3/docs/)
 
 ## 特性
 
-- 常用格式统一入口：DOC / DOCX、XLS / XLSX、PDF、PPTX
+- 常用格式统一入口：DOC / DOCX、XLS / XLSX、PDF、PPTX 与图片
 - 本地文件直接在浏览器中读取，不要求服务端转换
-- Word、Excel、PDF、PowerPoint 渲染器按需加载
+- Word、Excel、PDF、PowerPoint 与图片渲染器按需加载
 - 支持 ESM、UMD、TypeScript 类型声明与独立样式入口
 - 提供深浅主题、工具栏、缩放范围和表格渲染限制
 - 包含完整示例项目与 VitePress 中文文档
@@ -21,6 +21,7 @@
 | Excel | `.xls` `.xlsx` `.xlsm` `.xlsb` `.xlt` `.xltx` `.xltm` | 多工作表、单元格内容与基础格式 |
 | PDF | `.pdf` | 多页 Canvas 渲染 |
 | PowerPoint | `.pptx` `.pptm` `.potx` `.potm` `.ppsx` `.ppsm` | 文本、图片与基础形状 |
+| 图片 | `.png` `.jpg` `.jpeg` `.gif` `.webp` `.bmp` `.svg` `.avif` `.ico` `.jxl` `.heic` `.heif` `.tif` `.tiff` | 自适应、旋转、灯箱；HEIC/HEIF 转换与多页 TIFF |
 
 远程 URL 由浏览器直接读取，需要目标服务器允许 CORS。旧版二进制 `.ppt` 暂不支持，建议转换为 `.pptx`。
 
@@ -49,7 +50,7 @@ function chooseFile(event: Event) {
 <template>
   <input
     type="file"
-    accept=".doc,.docx,.xls,.xlsx,.pdf,.pptx"
+    accept=".doc,.docx,.xls,.xlsx,.pdf,.pptx,.png,.jpg,.webp,.tiff,.heic"
     @change="chooseFile"
   >
   <DocumentViewer
@@ -134,6 +135,7 @@ app.use(DocumentViewer, { componentName: 'OfficePreview' })
 - `reload()` / `destroy()`
 - `zoomIn()` / `zoomOut()` / `resetZoom()` / `setZoom()`
 - `getZoomState()`
+- `rotateLeft()` / `rotateRight()` / `setRotation()` / `getRotation()`（图片）
 - `downloadOriginalFile()`
 - `print()`
 - `getScrollContainer()`

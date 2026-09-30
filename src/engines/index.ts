@@ -11,5 +11,7 @@ export async function loadDocumentRenderer(kind: DocumentKind): Promise<Document
       return (await import('./pdf')).renderPdfDocument
     case 'presentation':
       return (await import('./presentation')).renderPresentationDocument
+    case 'image':
+      return (await import('./image')).renderImageDocument
   }
 }

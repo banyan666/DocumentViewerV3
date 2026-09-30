@@ -21,7 +21,7 @@ defineOptions({ name: 'DocumentViewer' })
 const props = withDefaults(defineProps<DocumentViewerProps>(), {
   height: '100%',
   strict: true,
-  emptyText: '选择一个 Word、Excel、PDF 或 PowerPoint 文件开始预览',
+  emptyText: '选择一个文档或图片文件开始预览',
   errorText: '文档加载失败，请检查文件是否受损',
 })
 
@@ -42,6 +42,7 @@ const errorMessage = ref('')
 const progress = ref<DocumentProgress>({ current: 0, total: 1 })
 const pageCount = ref(0)
 const zoom = ref(1)
+const rotation = ref(0)
 
 let mounted = false
 let loadSequence = 0
@@ -81,7 +82,7 @@ const stateMessage = computed(() => {
   if (status.value === 'error') return errorMessage.value
   if (status.value === 'unsupported') {
     return extension.value
-      ? `暂不支持 .${extension.value}；请选择 DOC/DOCX、XLS/XLSX、PDF 或 PPTX 文档。`
+      ? `暂不支持 .${extension.value}；请选择受支持的文档或图片格式。`
       : '无法识别文件类型，请通过 filename 属性提供扩展名。'
   }
   return props.emptyText
@@ -126,6 +127,7 @@ async function reload() {
   const sequence = ++loadSequence
   await destroyActive()
   pageCount.value = 0
+  rotation.value = 0
   errorMessage.value = ''
   progress.value = { current: 0, total: 1 }
 
@@ -206,6 +208,26 @@ const zoomIn = () => setZoom(zoom.value + 0.1)
 const zoomOut = () => setZoom(zoom.value - 0.1)
 const resetZoom = () => setZoom(props.options?.initialZoom ?? 1)
 
+function getRotation() {
+  return rendererController?.getRotation?.() ?? rotation.value
+}
+
+function setRotation(value: number) {
+  const normalized = ((Math.round(value / 90) * 90) % 360 + 360) % 360
+  rotation.value = rendererController?.setRotation?.(normalized) ?? normalized
+  return rotation.value
+}
+
+function rotateLeft() {
+  rotation.value = rendererController?.rotateLeft?.() ?? setRotation(rotation.value - 90)
+  return rotation.value
+}
+
+function rotateRight() {
+  rotation.value = rendererController?.rotateRight?.() ?? setRotation(rotation.value + 90)
+  return rotation.value
+}
+
 function downloadOriginalFile() {
   if (!sourceBuffer) return
   const blob = new Blob([sourceBuffer], {
@@ -231,6 +253,10 @@ const publicApi: DocumentViewerInstance = {
   resetZoom,
   setZoom,
   getZoomState,
+  rotateLeft,
+  rotateRight,
+  setRotation,
+  getRotation,
   downloadOriginalFile,
   print,
   getScrollContainer: () => scrollContainer.value,
@@ -281,6 +307,12 @@ onBeforeUnmount(() => {
         <small v-if="pageCount">{{ pageCount }} {{ kind === 'spreadsheet' ? '个工作表' : '页' }}</small>
       </div>
       <div class="document-viewer__actions">
+        <button v-if="kind === 'image'" type="button" title="向左旋转" aria-label="向左旋转" :disabled="status !== 'ready'" @click="rotateLeft">↺</button>
+        <button v-if="kind === 'image'" type="button" class="document-viewer__rotation" title="重置图片旋转" aria-label="重置图片旋转" :disabled="status !== 'ready'" @click="setRotation(0)">
+          {{ rotation }}°
+        </button>
+        <button v-if="kind === 'image'" type="button" title="向右旋转" aria-label="向右旋转" :disabled="status !== 'ready'" @click="rotateRight">↻</button>
+        <span v-if="kind === 'image'" class="document-viewer__separator" />
         <button type="button" title="缩小" :disabled="status !== 'ready'" @click="zoomOut">−</button>
         <button type="button" class="document-viewer__zoom" title="重置缩放" :disabled="status !== 'ready'" @click="resetZoom">
           {{ Math.round(zoom * 100) }}%
@@ -294,7 +326,7 @@ onBeforeUnmount(() => {
     </header>
 
     <div v-if="status === 'empty' || status === 'unsupported' || status === 'error'" class="document-viewer__state" :class="{ 'is-error': status !== 'empty' }" :role="status === 'empty' ? 'status' : 'alert'">
-      <span class="document-viewer__file-mark" aria-hidden="true">{{ status === 'empty' ? 'DOC' : '!' }}</span>
+      <span class="document-viewer__file-mark" aria-hidden="true">{{ status === 'empty' ? 'FILE' : '!' }}</span>
       <p>{{ stateMessage }}</p>
       <button v-if="status === 'error'" type="button" @click="reload">重新加载</button>
     </div>
