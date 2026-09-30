@@ -1,6 +1,6 @@
 {
   "name": "document-viewer-vue3",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Browser-native Vue 3 viewer for Word, Excel, PDF, PowerPoint, and image files.",
   "homepage": "https://banyan666.github.io/DocumentViewerV3/",
   "repository": {
