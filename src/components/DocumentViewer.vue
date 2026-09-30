@@ -22,6 +22,7 @@ const props = withDefaults(defineProps<DocumentViewerProps>(), {
   height: '100%',
   strict: true,
   emptyText: '选择一个 Word、Excel、PDF 或 PowerPoint 文件开始预览',
+  errorText: '文档加载失败，请检查文件是否受损',
 })
 
 const emit = defineEmits<{
@@ -85,11 +86,6 @@ const stateMessage = computed(() => {
   }
   return props.emptyText
 })
-
-const normalizeError = (error: unknown) => {
-  if (error instanceof Error && error.message) return error.message
-  return typeof error === 'string' ? error : '文档预览失败。'
-}
 
 const createLoadContext = (byteLength?: number): DocumentLoadContext | null => {
   if (!kind.value) return null
@@ -187,7 +183,8 @@ async function reload() {
     emit('load-complete', activeContext)
   } catch (error) {
     if (controller.signal.aborted || sequence !== loadSequence) return
-    const message = normalizeError(error)
+    console.error('[document-viewer-vue3] 文档解析失败：', error)
+    const message = props.errorText
     errorMessage.value = message
     status.value = 'error'
     emit('error', message)

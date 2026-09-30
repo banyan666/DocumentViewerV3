@@ -103,6 +103,7 @@ app.use(DocumentViewer, { componentName: 'OfficePreview' })
 | `height` | `string \| number` | `'100%'` | 预览区域高度 |
 | `strict` | `boolean` | `true` | 是否拒绝支持清单以外的扩展名 |
 | `emptyText` | `string` | 内置提示 | 空状态文字 |
+| `errorText` | `string` | `'文档加载失败，请检查文件是否受损'` | 文档加载或解析失败时的提示文字 |
 | `options` | `DocumentViewerOptions` | `{}` | 工具栏、主题、缩放和渲染限制 |
 
 `DocumentViewerOptions`：

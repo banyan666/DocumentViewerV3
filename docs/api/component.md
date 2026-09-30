@@ -10,6 +10,7 @@
 | `height` | `string \| number` | `'100%'` | 预览区域高度；数字按像素处理 |
 | `strict` | `boolean` | `true` | 是否拒绝支持清单之外的扩展名 |
 | `emptyText` | `string` | 内置提示 | 未传入文档时的空状态文字 |
+| `errorText` | `string` | `'文档加载失败，请检查文件是否受损'` | 文档无法读取或解析时的提示文字 |
 | `options` | `DocumentViewerOptions` | `{}` | 工具栏、主题、缩放和渲染限制 |
 
 ## 事件
@@ -22,7 +23,7 @@
 | `unload-start` | `DocumentLoadContext` | 开始卸载当前文档 |
 | `unload-complete` | `DocumentLoadContext` | 当前文档完成卸载 |
 | `zoom-change` | `DocumentZoomState` | 缩放比例改变 |
-| `error` | `string` | 文档加载或渲染失败 |
+| `error` | `string` | 文档加载或渲染失败；参数与界面中的 `errorText` 一致 |
 
 ```vue
 <DocumentViewer

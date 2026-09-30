@@ -28,6 +28,8 @@ export interface DocumentViewerProps {
   height?: string | number
   strict?: boolean
   emptyText?: string
+  /** Text shown and emitted when a document cannot be loaded or parsed. */
+  errorText?: string
   options?: DocumentViewerOptions
 }
 
