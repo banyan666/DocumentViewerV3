@@ -5,6 +5,8 @@
   --dv-ink: #172033;
   --dv-muted: #657187;
   --dv-accent: #3159c7;
+  --document-viewer-page-padding: 24px;
+  --document-viewer-page-gap: 20px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -165,11 +167,22 @@
 .document-viewer__loading i { display: block; height: 100%; background: var(--dv-accent); transition: width 180ms ease; }
 .document-viewer__spinner { width: 18px; height: 18px; border: 2px solid var(--dv-border); border-top-color: var(--dv-accent); border-radius: 50%; animation: document-viewer-spin .7s linear infinite; }
 
-.document-renderer--word { padding: 24px; }
-.document-renderer--word .docx-wrapper { padding: 0 !important; background: transparent !important; }
-.document-renderer--word section.docx { margin: 0 auto 22px; box-shadow: 0 5px 22px rgb(15 23 42 / 12%); }
+.document-renderer--word { padding: var(--document-viewer-page-padding); background: transparent; }
+.document-renderer--word .docx-wrapper,
+.document-renderer--word .document-viewer-docx-wrapper {
+  width: 100%;
+  min-height: 100%;
+  gap: var(--document-viewer-page-gap);
+  padding: 0 !important;
+  background: transparent !important;
+}
+.document-renderer--word section.docx,
+.document-renderer--word section.document-viewer-docx {
+  margin: 0 auto !important;
+  box-shadow: 0 5px 22px rgb(15 23 42 / 12%);
+}
 .document-renderer--doc { padding: 0; }
-.document-renderer--doc .msdoc-stage { display: flex; flex-direction: column; align-items: center; gap: 22px; min-width: max-content; min-height: 100%; padding: 24px; background: var(--dv-surface); }
+.document-renderer--doc .msdoc-stage { display: flex; flex-direction: column; align-items: center; gap: var(--document-viewer-page-gap); min-width: max-content; min-height: 100%; padding: var(--document-viewer-page-padding); background: transparent; }
 .document-renderer--doc .msdoc-page { width: 794px; min-height: 1123px; background: #fff; box-shadow: 0 5px 22px rgb(15 23 42 / 14%); }
 .document-renderer--doc .msdoc-page > .msdoc-root { width: 794px; min-height: 1123px; max-width: none; padding: 76px 72px; overflow-wrap: anywhere; }
 .document-renderer--doc .msdoc-table { display: table; width: auto; max-width: 100%; table-layout: auto !important; border-collapse: collapse; }
@@ -190,11 +203,11 @@
 .document-sheet td.is-number { text-align: right; font-variant-numeric: tabular-nums; }
 .document-sheet td a { color: #245ac7; }
 
-.document-renderer--pdf { display: grid; justify-items: center; gap: 20px; padding: 24px; }
+.document-renderer--pdf { display: grid; justify-items: center; gap: var(--document-viewer-page-gap); padding: var(--document-viewer-page-padding); background: transparent; }
 .document-pdf-page { overflow: hidden; max-width: 100%; background: #fff; box-shadow: 0 5px 22px rgb(15 23 42 / 16%); }
 .document-pdf-page canvas { display: block; max-width: none; }
 
-.document-renderer--presentation { display: grid; justify-items: center; gap: 24px; padding: 24px; }
+.document-renderer--presentation { display: grid; justify-items: center; gap: var(--document-viewer-page-gap); padding: var(--document-viewer-page-padding); background: transparent; }
 .document-slide { position: relative; container-type: inline-size; width: min(960px, calc(100vw - 96px)); overflow: hidden; background: #fff; color: #172033; box-shadow: 0 7px 26px rgb(15 23 42 / 18%); }
 .document-slide__shape, .document-slide__picture { position: absolute; }
 .document-slide__shape { display: flex; align-items: center; overflow: hidden; padding: .3%; white-space: pre-wrap; line-height: 1.18; }
@@ -203,11 +216,11 @@
 @keyframes document-viewer-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 640px) {
+  .document-viewer { --document-viewer-page-padding: 12px; }
   .document-viewer__identity small { display: none; }
   .document-viewer__identity strong { max-width: 30vw; }
   .document-viewer__toolbar { gap: 6px; padding-inline: 6px; }
   .document-viewer__actions .document-viewer__zoom { min-width: 48px; }
-  .document-renderer--word, .document-renderer--pdf, .document-renderer--presentation { padding: 12px; }
   .document-slide { width: calc(100vw - 52px); }
 }
 
@@ -217,5 +230,5 @@
   .document-viewer { position: absolute; inset: 0; height: auto !important; overflow: visible; border: 0; }
   .document-viewer__toolbar { display: none; }
   .document-viewer__viewport { overflow: visible; background: #fff; }
-  .document-pdf-page, .document-slide, .document-renderer--word section.docx, .document-renderer--doc .msdoc-page { break-after: page; box-shadow: none; }
+  .document-pdf-page, .document-slide, .document-renderer--word section.docx, .document-renderer--word section.document-viewer-docx, .document-renderer--doc .msdoc-page { break-after: page; box-shadow: none; }
 }

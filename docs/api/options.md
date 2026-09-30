@@ -30,6 +30,17 @@
 />
 ```
 
+## 页面间距
+
+Word、旧版 DOC、PDF 和 PowerPoint 使用统一的外层边距与页间距，渲染器周围背景保持透明。可通过 CSS 变量调整：
+
+```css
+.document-viewer {
+  --document-viewer-page-padding: 24px;
+  --document-viewer-page-gap: 20px;
+}
+```
+
 ## DocumentLoadContext
 
 ```ts

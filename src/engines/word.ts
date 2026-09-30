@@ -74,7 +74,9 @@ export const renderWordDocument: DocumentRenderer = async ({
   if (signal.aborted) throw new DOMException('Document load aborted', 'AbortError')
   const pageCount = Math.max(
     1,
-    container.querySelectorAll('section.docx > article').length ||
+    container.querySelectorAll('section.document-viewer-docx > article').length ||
+      container.querySelectorAll('section.document-viewer-docx').length ||
+      container.querySelectorAll('section.docx > article').length ||
       container.querySelectorAll('section.docx').length,
   )
   onProgress({ current: 1, total: 1, label: 'Word 文档已就绪' })
