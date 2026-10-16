@@ -37,19 +37,25 @@ export const renderPdfDocument: DocumentRenderer = async ({
 
       const page = await pdf.getPage(pageNumber)
       const viewport = page.getViewport({ scale: 1.35 })
+      const printViewport = page.getViewport({ scale: 96 / 72 })
       const pixelRatio = Math.min(2, globalThis.devicePixelRatio || 1)
       const pageShell = container.ownerDocument.createElement('section')
       const canvas = container.ownerDocument.createElement('canvas')
       const context = canvas.getContext('2d', { alpha: false })
       if (!context) throw new Error('当前浏览器无法创建 PDF Canvas。')
 
-      pageShell.className = 'document-pdf-page'
+      pageShell.className = 'document-page document-pdf-page'
       pageShell.dataset.page = String(pageNumber)
+      pageShell.dataset.printWidth = String(printViewport.width)
+      pageShell.dataset.printHeight = String(printViewport.height)
+      pageShell.setAttribute('role', 'group')
+      pageShell.setAttribute('aria-label', `第 ${pageNumber} 页，共 ${pdf.numPages} 页`)
       canvas.width = Math.floor(viewport.width * pixelRatio)
       canvas.height = Math.floor(viewport.height * pixelRatio)
       canvas.style.width = `${viewport.width}px`
       canvas.style.height = `${viewport.height}px`
       pageShell.style.width = `${viewport.width}px`
+      pageShell.style.height = `${viewport.height}px`
       pageShell.appendChild(canvas)
       container.appendChild(pageShell)
 

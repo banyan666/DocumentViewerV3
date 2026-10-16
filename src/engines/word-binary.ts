@@ -4,6 +4,7 @@ import type { WindowLike } from 'dompurify'
 import type { DocumentRenderer } from '../types'
 import { parseMsDoc } from './legacy-doc/msdoc/parser'
 import { defaultMsDocCss, renderMsDoc } from './legacy-doc/render/html'
+import { paginateWordDocument } from './word-pagination'
 
 const PAGE_BREAK_MARKER = '<span class="msdoc-page-break"></span>'
 const EMPTY_PAGE_HTML = '<p class="msdoc-paragraph"><br></p>'
@@ -63,10 +64,11 @@ export const renderBinaryWordDocument: DocumentRenderer = async ({
   }
 
   container.replaceChildren(style, stage)
+  const pageCount = await paginateWordDocument(container, signal)
   onProgress({ current: 1, total: 1, label: '旧版 Word 文档已就绪' })
 
   return {
-    pageCount: Math.max(1, pages.length),
+    pageCount,
     destroy() {
       container.replaceChildren()
       container.classList.remove(

@@ -23,7 +23,7 @@
 | `unload-start` | `DocumentLoadContext` | 开始卸载当前文档 |
 | `unload-complete` | `DocumentLoadContext` | 当前文档完成卸载 |
 | `zoom-change` | `DocumentZoomState` | 缩放比例改变 |
-| `error` | `string` | 文档加载或渲染失败；参数与界面中的 `errorText` 一致 |
+| `error` | `string` | 文档加载或渲染失败时使用 `errorText`；打印准备失败时返回对应提示 |
 
 ```vue
 <DocumentViewer
@@ -67,8 +67,12 @@ const viewer = ref<DocumentViewerInstance>()
 | `setRotation(rotation)` | `number` | 设置图片旋转角度（自动归一为 90° 的倍数） |
 | `getRotation()` | `number` | 读取当前图片旋转角度 |
 | `downloadOriginalFile()` | `void` | 下载当前文档原始数据 |
-| `print()` | `void` | 调用浏览器打印 |
+| `print()` | `void` | 仅打印当前文档的完整内容，保留文档分页 |
 | `getScrollContainer()` | `HTMLDivElement \| null` | 获取预览滚动容器 |
+
+打印使用文档的完整分页内容，不受当前预览缩放、滚动位置和宿主页面布局影响。PDF 的每页画布会复制到打印页面，文档自身的页眉、页脚会保留。
+
+浏览器自动添加的日期、网页标题、网址和页码由浏览器的“页眉和页脚”选项控制。组件打印页使用零外边距，避免这些信息占用文档空间；如果浏览器仍显示这些内容，可在打印对话框的“更多设置”中取消勾选“页眉和页脚”。组件不能通过 JavaScript 修改该浏览器设置。
 
 ## 插槽
 

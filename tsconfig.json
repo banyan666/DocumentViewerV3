@@ -14,6 +14,7 @@
     "src/**/*.vue",
     "examples/**/*.ts",
     "examples/**/*.vue",
+    "tests/**/*.ts",
     "vite.config.ts",
     "vite.lib.config.ts"
   ]

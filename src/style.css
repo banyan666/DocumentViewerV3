@@ -6,7 +6,7 @@
   --dv-muted: #657187;
   --dv-accent: #3159c7;
   --document-viewer-page-padding: 24px;
-  --document-viewer-page-gap: 20px;
+  --document-viewer-page-gap: 32px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -171,7 +171,11 @@
 .document-renderer--word { padding: var(--document-viewer-page-padding); background: transparent; }
 .document-renderer--word .docx-wrapper,
 .document-renderer--word .document-viewer-docx-wrapper {
-  width: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
+  width: max-content;
+  min-width: 100%;
   min-height: 100%;
   gap: var(--document-viewer-page-gap);
   padding: 0 !important;
@@ -179,9 +183,17 @@
 }
 .document-renderer--word section.docx,
 .document-renderer--word section.document-viewer-docx {
+  flex: none !important;
   margin: 0 auto !important;
   box-shadow: 0 5px 22px rgb(15 23 42 / 12%);
 }
+.document-page { outline: 1px solid rgb(15 23 42 / 12%); background: #fff; }
+.document-word-page { display: flex; flex-direction: column; flex: none !important; overflow: hidden; }
+.document-word-page > header, .document-word-page > footer { flex: none; }
+.document-word-page-body { flex: 1 1 0; min-height: 0; }
+.document-word-page-body > article { margin: 0 !important; }
+.document-word-paragraph-continuation { text-indent: 0 !important; counter-increment: none !important; list-style: none !important; }
+.document-word-paragraph-continuation::before { display: none !important; }
 .document-renderer--doc { padding: 0; }
 .document-renderer--doc .msdoc-stage { display: flex; flex-direction: column; align-items: center; gap: var(--document-viewer-page-gap); min-width: max-content; min-height: 100%; padding: var(--document-viewer-page-padding); background: transparent; }
 .document-renderer--doc .msdoc-page { width: 794px; min-height: 1123px; background: #fff; box-shadow: 0 5px 22px rgb(15 23 42 / 14%); }
@@ -204,8 +216,8 @@
 .document-sheet td.is-number { text-align: right; font-variant-numeric: tabular-nums; }
 .document-sheet td a { color: #245ac7; }
 
-.document-renderer--pdf { display: grid; justify-items: center; gap: var(--document-viewer-page-gap); padding: var(--document-viewer-page-padding); background: transparent; }
-.document-pdf-page { overflow: hidden; max-width: 100%; background: #fff; box-shadow: 0 5px 22px rgb(15 23 42 / 16%); }
+.document-renderer--pdf { display: flex; flex-direction: column; align-items: center; width: max-content; min-width: 100%; gap: var(--document-viewer-page-gap); padding: var(--document-viewer-page-padding); background: transparent; }
+.document-pdf-page { flex: none; overflow: hidden; max-width: none; margin: 0; background: #fff; box-shadow: 0 5px 22px rgb(15 23 42 / 16%); }
 .document-pdf-page canvas { display: block; max-width: none; }
 
 .document-renderer--presentation { display: grid; justify-items: center; gap: var(--document-viewer-page-gap); padding: var(--document-viewer-page-padding); background: transparent; }
@@ -231,7 +243,10 @@
 @keyframes document-viewer-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 640px) {
-  .document-viewer { --document-viewer-page-padding: 12px; }
+  .document-viewer {
+    --document-viewer-page-padding: 12px;
+    --document-viewer-page-gap: 24px;
+  }
   .document-viewer__identity small { display: none; }
   .document-viewer__identity strong { max-width: 30vw; }
   .document-viewer__toolbar { gap: 6px; padding-inline: 6px; }
@@ -246,14 +261,4 @@
   .document-image-frame img,
   .document-image-lightbox,
   .document-image-lightbox img { transition: none; }
-}
-
-@media print {
-  body * { visibility: hidden !important; }
-  .document-viewer, .document-viewer * { visibility: visible !important; }
-  .document-viewer { position: absolute; inset: 0; height: auto !important; overflow: visible; border: 0; }
-  .document-viewer__toolbar { display: none; }
-  .document-viewer__viewport { overflow: visible; background: #fff; }
-  .document-image-lightbox { display: none; }
-  .document-pdf-page, .document-slide, .document-image-frame, .document-renderer--word section.docx, .document-renderer--word section.document-viewer-docx, .document-renderer--doc .msdoc-page { break-after: page; box-shadow: none; }
 }

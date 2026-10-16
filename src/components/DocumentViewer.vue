@@ -1,7 +1,64 @@
+<template>
+  <section
+      class="document-viewer"
+      :data-theme="theme"
+      :data-state="status"
+      :style="{
+      '--document-viewer-height': normalizedHeight,
+      '--document-viewer-zoom': zoom,
+    }"
+      aria-label="文档预览"
+  >
+    <header v-if="showToolbar && hasSource && isSupported" class="document-viewer__toolbar">
+      <slot name="toolbar-start" :zoom="getZoomState()" :status="status" />
+      <div class="document-viewer__identity">
+        <span>{{ extension.toUpperCase() }}</span>
+        <strong :title="sourceName">{{ sourceName }}</strong>
+        <small v-if="pageCount">{{ pageCount }} {{ kind === 'spreadsheet' ? '个工作表' : '页' }}</small>
+      </div>
+      <div class="document-viewer__actions">
+        <button v-if="kind === 'image'" type="button" title="向左旋转" aria-label="向左旋转" :disabled="status !== 'ready'" @click="rotateLeft">↺</button>
+        <button v-if="kind === 'image'" type="button" class="document-viewer__rotation" title="重置图片旋转" aria-label="重置图片旋转" :disabled="status !== 'ready'" @click="setRotation(0)">
+          {{ rotation }}°
+        </button>
+        <button v-if="kind === 'image'" type="button" title="向右旋转" aria-label="向右旋转" :disabled="status !== 'ready'" @click="rotateRight">↻</button>
+        <span v-if="kind === 'image'" class="document-viewer__separator" />
+        <button type="button" title="缩小" :disabled="status !== 'ready'" @click="zoomOut">−</button>
+        <button type="button" class="document-viewer__zoom" title="重置缩放" :disabled="status !== 'ready'" @click="resetZoom">
+          {{ Math.round(zoom * 100) }}%
+        </button>
+        <button type="button" title="放大" :disabled="status !== 'ready'" @click="zoomIn">＋</button>
+        <span class="document-viewer__separator" />
+        <button type="button" title="下载原文件" :disabled="status !== 'ready'" @click="downloadOriginalFile">↓</button>
+        <button type="button" :title="printing ? '正在准备打印' : '打印'" :disabled="status !== 'ready' || printing" @click="print">⎙</button>
+      </div>
+      <slot name="toolbar-end" :zoom="getZoomState()" :status="status" />
+    </header>
+
+    <div v-if="status === 'empty' || status === 'unsupported' || status === 'error'" class="document-viewer__state" :class="{ 'is-error': status !== 'empty' }" :role="status === 'empty' ? 'status' : 'alert'">
+      <span class="document-viewer__file-mark" aria-hidden="true">{{ status === 'empty' ? 'FILE' : '!' }}</span>
+      <p>{{ stateMessage }}</p>
+      <button v-if="status === 'error'" type="button" @click="reload">重新加载</button>
+    </div>
+
+    <div v-show="status === 'loading' || status === 'ready'" ref="scrollContainer" class="document-viewer__viewport">
+      <div ref="renderRoot" class="document-viewer__content" />
+    </div>
+
+    <div v-if="status === 'loading'" class="document-viewer__loading" role="status" aria-live="polite">
+      <span class="document-viewer__spinner" />
+      <div>
+        <strong>{{ progress.label || '正在读取文档' }}</strong>
+        <span><i :style="{ width: `${progressPercent}%` }" /></span>
+      </div>
+    </div>
+  </section>
+</template>
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import { loadDocumentRenderer } from '../engines'
+import { printDocument } from '../printing'
 import {
   getDocumentExtension,
   getDocumentKind,
@@ -43,6 +100,7 @@ const progress = ref<DocumentProgress>({ current: 0, total: 1 })
 const pageCount = ref(0)
 const zoom = ref(1)
 const rotation = ref(0)
+const printing = ref(false)
 
 let mounted = false
 let loadSequence = 0
@@ -242,7 +300,13 @@ function downloadOriginalFile() {
 }
 
 function print() {
-  window.print()
+  const target = renderRoot.value
+  if (!target || status.value !== 'ready' || printing.value) return
+  printing.value = true
+  void printDocument(target).catch(error => {
+    console.error('[document-viewer-vue3] 打印失败：', error)
+    emit('error', '打印失败，请重试')
+  }).finally(() => { printing.value = false })
 }
 
 const publicApi: DocumentViewerInstance = {
@@ -288,59 +352,4 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<template>
-  <section
-    class="document-viewer"
-    :data-theme="theme"
-    :data-state="status"
-    :style="{
-      '--document-viewer-height': normalizedHeight,
-      '--document-viewer-zoom': zoom,
-    }"
-    aria-label="文档预览"
-  >
-    <header v-if="showToolbar && hasSource && isSupported" class="document-viewer__toolbar">
-      <slot name="toolbar-start" :zoom="getZoomState()" :status="status" />
-      <div class="document-viewer__identity">
-        <span>{{ extension.toUpperCase() }}</span>
-        <strong :title="sourceName">{{ sourceName }}</strong>
-        <small v-if="pageCount">{{ pageCount }} {{ kind === 'spreadsheet' ? '个工作表' : '页' }}</small>
-      </div>
-      <div class="document-viewer__actions">
-        <button v-if="kind === 'image'" type="button" title="向左旋转" aria-label="向左旋转" :disabled="status !== 'ready'" @click="rotateLeft">↺</button>
-        <button v-if="kind === 'image'" type="button" class="document-viewer__rotation" title="重置图片旋转" aria-label="重置图片旋转" :disabled="status !== 'ready'" @click="setRotation(0)">
-          {{ rotation }}°
-        </button>
-        <button v-if="kind === 'image'" type="button" title="向右旋转" aria-label="向右旋转" :disabled="status !== 'ready'" @click="rotateRight">↻</button>
-        <span v-if="kind === 'image'" class="document-viewer__separator" />
-        <button type="button" title="缩小" :disabled="status !== 'ready'" @click="zoomOut">−</button>
-        <button type="button" class="document-viewer__zoom" title="重置缩放" :disabled="status !== 'ready'" @click="resetZoom">
-          {{ Math.round(zoom * 100) }}%
-        </button>
-        <button type="button" title="放大" :disabled="status !== 'ready'" @click="zoomIn">＋</button>
-        <span class="document-viewer__separator" />
-        <button type="button" title="下载原文件" :disabled="status !== 'ready'" @click="downloadOriginalFile">↓</button>
-        <button type="button" title="打印" :disabled="status !== 'ready'" @click="print">⎙</button>
-      </div>
-      <slot name="toolbar-end" :zoom="getZoomState()" :status="status" />
-    </header>
 
-    <div v-if="status === 'empty' || status === 'unsupported' || status === 'error'" class="document-viewer__state" :class="{ 'is-error': status !== 'empty' }" :role="status === 'empty' ? 'status' : 'alert'">
-      <span class="document-viewer__file-mark" aria-hidden="true">{{ status === 'empty' ? 'FILE' : '!' }}</span>
-      <p>{{ stateMessage }}</p>
-      <button v-if="status === 'error'" type="button" @click="reload">重新加载</button>
-    </div>
-
-    <div v-show="status === 'loading' || status === 'ready'" ref="scrollContainer" class="document-viewer__viewport">
-      <div ref="renderRoot" class="document-viewer__content" />
-    </div>
-
-    <div v-if="status === 'loading'" class="document-viewer__loading" role="status" aria-live="polite">
-      <span class="document-viewer__spinner" />
-      <div>
-        <strong>{{ progress.label || '正在读取文档' }}</strong>
-        <span><i :style="{ width: `${progressPercent}%` }" /></span>
-      </div>
-    </div>
-  </section>
-</template>
